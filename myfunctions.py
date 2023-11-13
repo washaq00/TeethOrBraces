@@ -52,11 +52,13 @@ def train_step(model: torch.nn.Module,
                optimize,
                acc):
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     tloss:float = 0
     tacc:float = 0
     model.train()
 
     for batch, (x, y) in enumerate(train_data):
+        x, y = x.to(device), y.to(device)
         y_logits = model(x)
         loss = loss_fn(y_logits, y)
         optimize.zero_grad()
@@ -79,9 +81,11 @@ def test_step(model: torch.nn.Module,
     tloss: float = 0
     tacc: float = 0
     model.eval()
+    device = "cuda" if torch.cuda.is_available() else "cpu"
 
     for x, y in test_data:
         with torch.inference_mode():
+            x, y = x.to(device), y.to(device)
             test_logits = model(x)
             loss = loss_fn(test_logits, y)
 

@@ -20,10 +20,13 @@ from helper_functions import accuracy_fn, plot_loss_curves
 #     parser.add_argument('--train', action='store_true')
 #     parser.add_argument('--test', action='store_true')
 #     return parser
+torch.cuda.manual_seed(42)
 
 
 def main():
 
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(torch.cuda.is_available())
     # if Path("helper_functions.py").is_file():
     #   print("helper_functions.py already exists, skipping download")
     # else:
@@ -32,7 +35,7 @@ def main():
     #     f.write(request.content)
 
     BATCH_SIZE = 32
-    NUM_WORKERS = os.cpu_count()
+    NUM_WORKERS = 4
 
     #implement Data Augmentation and Image Resizing
     train_transform = transforms.Compose([
@@ -78,7 +81,7 @@ def main():
 
     model_0 = TinyVgg(input_shape=3,
                       hidden_units=10,
-                      output_shape=len(train_data.classes))
+                      output_shape=len(train_data.classes)).to(device)
 
     # print(model_0)
     # model_0.eval()
